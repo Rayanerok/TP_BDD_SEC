@@ -6,6 +6,9 @@ from functools import wraps
 from datetime import datetime, timedelta
 import os
 import jwt
+from schemas import UserSchema
+from marshmallow import ValidationError
+
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -84,8 +87,15 @@ def get_users(current_user):
     users = User.query.all()
     return jsonify([{"id": u.id, "name": u.name} for u in users])
 
+
+
+user_schema = UserSchema()
+
+
+
 @app.route('/users', methods=["POST"])
 def create_user():
+    json_data = request.get_json()
     data = request.get_json()
     name = data.get("name")
     if not name:
