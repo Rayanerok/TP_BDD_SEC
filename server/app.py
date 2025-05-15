@@ -10,6 +10,8 @@ from schemas import UserSchema
 from marshmallow import ValidationError
 import bleach
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -17,7 +19,12 @@ load_dotenv()
 # Initialisation de l'application Flask
 app = Flask(__name__)
 CORS(app)
-
+ #Configuration du rate limiter pour limiter le nombre de requêtes par IP
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=[]
+)
 # Configuration de la base de données
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 1 * 1024 * 1024  # Limite de 1 Mo
@@ -45,7 +52,7 @@ class User(db.Model):
 
 # Créer les tables
 with app.app_context():
-    db.drop_all()   # Supprime toutes les tables
+
     db.create_all()
 
 
@@ -83,6 +90,7 @@ def test_db():
         return jsonify({"status": "Erreur de connexion ❌", "error": str(e)}), 500
 
 @app.route('/login', methods=['POST'])
+@limiter.limit("5 per minute")  # Cette route ne peut être appelée que 5 fois par minute par IP
 def login():
     try:
         data = request.get_json()
