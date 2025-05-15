@@ -8,6 +8,7 @@ import os
 import jwt
 from schemas import UserSchema
 from marshmallow import ValidationError
+import bleach
 
 
 # Charger les variables d'environnement
@@ -88,21 +89,27 @@ def get_users(current_user):
     return jsonify([{"id": u.id, "name": u.name} for u in users])
 
 
-
+#------------------------------------
 user_schema = UserSchema()
-
-
 
 @app.route('/users', methods=["POST"])
 def create_user():
     json_data = request.get_json()
-    data = request.get_json()
-    name = data.get("name")
-    if not name:
-        return jsonify({"error": "Le champ 'name' est requis"}), 400
-    user = User(name=name)
+    
+    try:
+        # Étape 1 : Validation
+        data = user_schema.load(json_data)
+    except ValidationError as err:
+        return jsonify({"errors": err.messages}), 400
+
+    # Étape 2 : Nettoyage du champ 'name' après validation
+    clean_name = bleach.clean(data["name"])
+
+    # Étape 3 : Création de l'utilisateur avec données nettoyées
+    user = User(name=clean_name)
     db.session.add(user)
     db.session.commit()
+
     return jsonify({"message": "Utilisateur créé", "id": user.id}), 201
 
 @app.route('/users/<int:user_id>', methods=["PUT"])

@@ -4,3 +4,4 @@ database/
 *.lock
 *.turtle
 *.wt
+.env
