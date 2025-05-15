@@ -1,0 +1,21 @@
+
+# Utiliser l'image de base Python
+FROM python:3.9
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers nécessaires
+COPY requirements.txt .
+
+# Installer les dépendances
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copier l'ensemble des fichiers dans le conteneur
+COPY . .
+
+# Exposer le port sur lequel l'application Flask fonctionne
+EXPOSE 5000
+
+# Lancer l'application Flask
+CMD ["python", "app.py"]

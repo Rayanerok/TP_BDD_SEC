@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: rayane
+      POSTGRES_PASSWORD: Adminadmin
+      POSTGRES_DB: ma_base
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./server
+    container_name: flask-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    env_file:
+      - .env

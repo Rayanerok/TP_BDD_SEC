@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # Service pour la base de données PostgreSQL
+  postgres:
+    image: postgres:13
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: testdb
+    ports:
+      - "5432:5432"  # Expose le port de la base de données pour qu'il soit accessible
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # Persiste les données entre les redémarrages
+
+  # Service pour le backend Flask
+  flask-backend:
+    build: ./server
+    container_name: flask-backend
+    ports:
+      - "5000:5000"  # Expose le port 5000 pour accéder à l'API
+    depends_on:
+      - postgres  # Assure que le service Flask dépend de la base de données PostgreSQL
+    env_file:
+      - .env  # Charge les variables d'environnement depuis le fichier .env
+
+# Volumes pour persister les données de la base de données PostgreSQL
+volumes:
+  pgdata:
