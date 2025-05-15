@@ -1,7 +1,20 @@
-
-# Ignorer les fichiers MongoDB (répertoire .mongodb + fichiers de données)
-database/
-*.lock
-*.turtle
-*.wt
+# Ignorer les fichiers de configuration sensibles
 .env
+
+# Cache Python
+__pycache__/
+*.pyc
+# Base de données locale
+bdd/
+*.sqlite3
+# Fichiers de log
+*.log
+# Dossiers/paramètres IDE
+.vscode/
+.idea/
+
+*.pid
+*.sock
+# Virtualenv
+venv/
+.env/
