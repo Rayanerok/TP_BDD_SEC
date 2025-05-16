@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
 function Login({ onLogin }) {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -56,6 +58,9 @@ function Login({ onLogin }) {
         />
         <button type="submit" style={{ width: '100%' }}>Se connecter</button>
       </form>
+      <p>
+      Pas encore inscrit ? <a href="/register">Créer un compte</a>
+      </p>
       {message && <p>{message}</p>}
     </div>
   );
